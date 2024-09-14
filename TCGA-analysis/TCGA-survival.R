@@ -1,0 +1,15 @@
+setwd("D:\\singleDATA\\TCGA")
+sur <- read.table('D:\\singleDATA\\TCGA\\survival.csv',header = T,fill = T,sep = ",")
+expression <- read.table('D:\\singleDATA\\TCGA\\expression.csv',header = T,fill = T,sep = ",")
+surdata <- merge(sur,expression,by.x = "sample")
+install.packages("survival")
+install.packages("survminer")
+library(survival)
+library(survminer)
+cut <- surv_cutpoint(surdata,'OS.time1','OS','PROS1') 
+print(paste0('The optimal cutpoint is ',cut$cutpoint$cutpoint,'.'))
+surdata$level<- ifelse(surdata$PROS1>cut$cutpoint$cutpoint,'High','Low') 
+fit <- survfit(Surv(OS.time,OS)~level,data = surdata)
+surv_pvalue(fit)$pval
+ggsurvplot(fit,pval = T,pval.method = T,risk.table = T)
+
