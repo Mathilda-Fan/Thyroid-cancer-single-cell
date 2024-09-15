@@ -20,14 +20,9 @@ group_list3 <- ifelse(as.numeric(str_sub(rownames(gene_exp),14,15)) < 10,'N0','
 group_list3 <- factor(group_list,levels = c("N0","N1"))
 table(group_list)
 
-#自定义配色：
 mycol <- c("#377EB8","#E41A1C")
-
-#计算样本数：
 num_normal <- length(group_list[group_list == 'normal'])
 num_cancer <- length(group_list[group_list == 'tumor'])
-
-#绘图：
 p1 <- ggplot(data = dt,
              aes(x = group1, y = log(dt[,1] + 1), color = group1, fill = group1)) +
   geom_boxplot(alpha = 0.4) +
@@ -44,16 +39,13 @@ p1 <- ggplot(data = dt,
   theme(legend.title = element_blank())
 p1
 
-#自定义配色：
-mycol2 <- c("#6388B4","#FFAE34","#EF6F6A")
+mycol2 <- c("#6388B4","#FFAE34","#EF6F6A","#F3C246")
 
-#计算样本数：
 T1<- length(group_list2[group_list2 == 'T1'])
 T2<- length(group_list2[group_list2 == 'T2'])
 T3<- length(group_list2[group_list2 == 'T3'])
 T4<- length(group_list2[group_list2 == 'T4'])
 
-#绘图：
 p2 <- ggplot(data = dt,
              aes(x = group2, y = log(dt[,1] + 1), color = group2, fill = group2)) +
   geom_boxplot(alpha = 0.4) +
@@ -71,9 +63,9 @@ p2 <- ggplot(data = dt,
         axis.text.x = element_text(angle = -20, hjust = 0)) 
 p2
 
-#t检验(wilcox方法一致)：
+#t-test(wilcox)：
 dt_t1 <- dt %>% t_test(formula = TPM ~ group1,
-                       comparisons = list(c("tumor", "normal")), #指定比较组
+                       comparisons = list(c("tumor", "normal")), 
                        paired = F) %>% add_significance()
 
 dt_t2 <- dt %>% t_test(formula = TPM ~ group2,
@@ -81,7 +73,6 @@ dt_t2 <- dt %>% t_test(formula = TPM ~ group2,
                        p.adjust.method = "bonferroni",
                        paired = F) %>% add_significance()
 dt_t1;dt_t2
-
 p1 + add_pvalue(dt_t1,
                 bracket.size = 0.5,
                 label.size = 4,
